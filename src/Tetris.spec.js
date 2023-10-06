@@ -17,7 +17,14 @@ class Game {
         return this._score;
     }
 
+    acceptPlayerInteraction(foo) {
+        // user interaction, rotate/translate piece, but is outside tick
+        // modifies piece, cannot move into bottom
+    }
+
     tick() {
+        // logic missing: create a new piece when previous has landed
+        // move down piece if one exists
         if (this._bottom.touches(this.piece)) {
             this._bottom.land(this.piece);
             this.piece = null;
@@ -125,6 +132,31 @@ class Bottom {
      * @returns {number}
      */
     maximumHeight() {
+        throw new Error("not implemented")
+    }
+}
+
+class Pieced {
+    /**
+     * Give next random piece
+     * @returns {Piece}
+     */
+    next() {
+        throw new Error("not implemented")
+    }
+
+    /**
+     * Show next - next piece
+     * @returns {Piece}
+     */
+    preview() {
+        throw new Error("not implemented")
+    }
+
+    /**
+     * Move the piece...
+     */
+    moveDown(piece) {
         throw new Error("not implemented")
     }
 }
