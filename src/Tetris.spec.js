@@ -6,6 +6,7 @@ class Game {
         this._coords = coords;
         this._bottom = bottom;
         this._score = 0;
+        this.piece = {};
     }
 
     isGameOver() {
@@ -17,7 +18,15 @@ class Game {
     }
 
     tick() {
+        if (this._bottom.touches(this.piece)) {
+            this._bottom.land(this.piece);
+            this.piece = null;
+        }
         this._score += this._bottom.removeFullLines().length;
+    }
+
+    getPiece() {
+        return this.piece;
     }
 }
 
@@ -37,9 +46,14 @@ describe('Tetris', () => {
 
         assert(game.isGameOver());
     });
+
     it('A full row is removed and scores the game', () => {
         const game = new Game({
             bottom: {
+                // needed by logic
+                touches(piece) {
+                    return false;
+                },
                 // given a full row at bottom coordinate 0 is removed
                 removeFullLines: () => {
                   return [0];
@@ -52,8 +66,31 @@ describe('Tetris', () => {
 
         assert(game.score() === 1);
     });
-})
-;
+
+    it('A piece touches bottom becomes immovable', () => {
+        let hasBeenCalled = false;
+        const game = new Game({
+            bottom: {
+                // given piece has labded
+                touches(piece) {
+                    return true;
+                },
+                land(piece) {
+                    hasBeenCalled = true;
+                },
+                // needed by logic, dont care
+                removeFullLines: () => {
+                    return [];
+                }
+            }
+        });
+        assert(game.getPiece());
+        // moves down -> lands -> .... -->  ?removeFullLines
+        game.tick();
+        assert(game.getPiece() === null);
+    });
+
+});
 
 // define given design elements
 // early in development
@@ -63,7 +100,7 @@ class Bottom {
      * Check a piece has contact with bottom
      * @returns {boolean}
      */
-    hasLanded(piece) {
+    touches(piece) {
         throw new Error("not implemented")
     }
 
@@ -91,5 +128,3 @@ class Bottom {
         throw new Error("not implemented")
     }
 }
-
-
