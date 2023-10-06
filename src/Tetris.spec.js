@@ -1,11 +1,35 @@
 import {describe, it} from "node:test";
 import assert from "assert";
 
-describe('yoyo', () => {
-    it('should ', () => {
-        assert(true);
+class Game {
+    constructor({ coords, bottom }) {
+        this._coords = coords;
+        this._bottom = bottom;
+    }
+
+    isGameOver() {
+        return this._bottom.maximumHeight() >= this._coords.height;
+    }
+}
+
+describe('Tetris', () => {
+    it('A full board loses the game', () => {
+        let boardheight = 10;
+        const game = new Game({
+            coords: {
+                height: boardheight,
+            },
+            bottom: {
+                maximumHeight: () => {
+                    return boardheight;
+                }
+            }
+        });
+
+        assert(game.isGameOver());
     });
-});
+})
+;
 
 // define given design elements
 // early in development
@@ -15,7 +39,7 @@ class Bottom {
      * Check a piece has contact with bottom
      * @returns {boolean}
      */
-    hasLanded(piece){
+    hasLanded(piece) {
         throw new Error("not implemented")
     }
 
