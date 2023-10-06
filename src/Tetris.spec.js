@@ -1,14 +1,23 @@
 import {describe, it} from "node:test";
-import assert from "assert";
+import assert from "node:assert";
 
 class Game {
     constructor({ coords, bottom }) {
         this._coords = coords;
         this._bottom = bottom;
+        this._score = 0;
     }
 
     isGameOver() {
         return this._bottom.maximumHeight() >= this._coords.height;
+    }
+
+    score() {
+        return this._score;
+    }
+
+    tick() {
+        this._score += this._bottom.removeFullLines().length;
     }
 }
 
@@ -27,6 +36,21 @@ describe('Tetris', () => {
         });
 
         assert(game.isGameOver());
+    });
+    it('A full row is removed and scores the game', () => {
+        const game = new Game({
+            bottom: {
+                // given a full row at bottom coordinate 0 is removed
+                removeFullLines: () => {
+                  return [0];
+                }
+            }
+        });
+        assert(game.score() === 0);
+
+        game.tick();
+
+        assert(game.score() === 1);
     });
 })
 ;
